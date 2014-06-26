@@ -3,8 +3,6 @@ package highlands.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import highlands.biome.BiomeGenBaseHighlands;
-import highlands.biome.BiomeGenTropicalIslands;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityMob;

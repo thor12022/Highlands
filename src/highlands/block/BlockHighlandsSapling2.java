@@ -75,14 +75,6 @@ public class BlockHighlandsSapling2 extends BlockHighlandsSapling implements IPl
     public void registerBlockIcons(IIconRegister par1IconRegister)
     {
     	this.blockIcon = par1IconRegister.registerIcon("Highlands:sapling" + treeNames[treeType]);
-    	
-    	/**
-    	textures = new IIcon[treeNames.length];
-
-		for (int i = 0; i < treeNames.length; ++i) {
-			textures[i] = par1IconRegister.registerIcon("Highlands:sapling" + treeNames[i]);
-		}
-		*/
     }
     
 	@Override

@@ -2,23 +2,28 @@ package highlands.worldgen.layer;
 
 import org.apache.logging.log4j.Level;
 
+import fabricator77.multiworld.api.biomeregistry.AdvancedBiomeRegistry;
 import highlands.Logs;
 import highlands.api.HighlandsBiomes;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
 
 public class GenLayerHillsHL extends GenLayer
 {
     private GenLayer river;
-    private int[] islandBiomeIDs;
+    private BiomeEntry[] islandBiomes;
+    private BiomeEntry[] oceanBiomes;
 
     public GenLayerHillsHL(long par1, GenLayer par3, GenLayer par4)
     {
         super(par1);
         this.parent = par3;
         this.river = par4;
-        setIslandBiomes();
+        islandBiomes = AdvancedBiomeRegistry.getBiomesOfType("island");
+        oceanBiomes = AdvancedBiomeRegistry.getBiomesOfType("ocean");
     }
 
     /**
@@ -36,10 +41,11 @@ public class GenLayerHillsHL extends GenLayer
         {
             for (int j1 = 0; j1 < par3; ++j1)
             {
+            	// loop start
                 this.initChunkSeed((long)(j1 + par1), (long)(i1 + par2));
-                int k1 = aint[j1 + 1 + (i1 + 1) * (par3 + 2)];
-                int l1 = aint1[j1 + 1 + (i1 + 1) * (par3 + 2)];
-                boolean flag = (l1 - 2) % 29 == 0;
+                int k1 = aint[j1 + 1 + (i1 + 1) * (par3 + 2)];  // parent layer
+                int l1 = aint1[j1 + 1 + (i1 + 1) * (par3 + 2)]; // river layer
+                boolean flag = (l1 - 2) % 29 == 0; // is biomeID 31 (megaTaiga biome)
                 
                 //BiomeGenBase biome2 = BiomeGenBase.getBiomeGenArray()[aint1[j1 + i1 * par3]];
                 //Logs.log(Level.INFO, "[Highlands] GenLayerRareBiomeHL input=" + biome2.biomeName);
@@ -47,25 +53,21 @@ public class GenLayerHillsHL extends GenLayer
                 if (k1 > 255)
                 {
                 	//Logs.log(Level.INFO, "[Highlands] GenLayerRareBiomeHL k1=" + k1);
+                	// k1 = 0;
                 }
 
-                // parent not ocean &&
-                // river not plains or ocean &&
-                // river is megaTaiga
-                // parent less than 128
-                //if (k1 != 0 && l1 >= 2 && (l1 - 2) % 29 == 1 && k1 < 128)
-                if (k1 != 0 && l1 >= 2 && l1 == 32 && k1 < 128)
-                {
-                    if (BiomeGenBase.getBiome(k1 + 128) != null)
-                    {
-                        aint2[j1 + i1 * par3] = k1 + 128;
-                    }
-                    else
-                    {
-                        aint2[j1 + i1 * par3] = k1;
-                    }
+                if (suitableForSubBiome(k1, l1)) {
+                //if (k1 != 0 && l1 >= 2 && l1 == 32 && k1 < 128) {//TODO remove vanilla hardcoded biome ids/assumptions
+                	if (AdvancedBiomeRegistry.biomeEntries[k1].subBiomes.length > 0) {
+                		aint2[j1 + i1 * par3] = getWeightedBiomeIDFromType(AdvancedBiomeRegistry.biomeEntries[k1].subBiomes);
+                		//Logs.log(Level.INFO, "placing sub-biome "+BiomeGenBase.getBiome(aint2[j1 + i1 * par3]).biomeName);
+                		//aint2[j1 + i1 * par3] = AdvancedBiomeRegistry.biomeEntries[k1].subBiomes[0].biome.biomeID;
+                	}
+                	else {
+                		aint2[j1 + i1 * par3] = k1;
+                	}
                 }
-                else if (this.nextInt(3) != 0 && !flag)
+                else if (this.nextInt(3) != 0 && !flag) // 2 in 3 chance + not megaTaiga
                 {
                     aint2[j1 + i1 * par3] = k1;
                 }
@@ -73,95 +75,36 @@ public class GenLayerHillsHL extends GenLayer
                 {
                     int i2 = k1;
                     int j2;
-
-                    if (k1 == BiomeGenBase.desert.biomeID)
+                    
+                    if (AdvancedBiomeRegistry.biomeEntries[k1].hillsBiomes.length > 0) {
+                    	i2 = getWeightedBiomeIDFromType(AdvancedBiomeRegistry.biomeEntries[k1].hillsBiomes);
+                    	// Logs.log(Level.INFO, "placing hills-biome "+BiomeGenBase.getBiome(i2).biomeName);
+                    	//i2 = AdvancedBiomeRegistry.biomeEntries[k1].hillsBiomes[0].biome.biomeID;
+                    	flag = false;
+                    }                    
+                    // supports multiple ocean and island biomes
+                    else if ( isOceanEdge(aint, j1, i1, par3) && this.nextInt(4) == 0) // was 3
                     {
-                        i2 = BiomeGenBase.desertHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.forest.biomeID)
-                    {
-                        i2 = BiomeGenBase.forestHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.birchForest.biomeID)
-                    {
-                        i2 = BiomeGenBase.birchForestHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.roofedForest.biomeID)
-                    {
-                        i2 = BiomeGenBase.plains.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.taiga.biomeID)
-                    {
-                        i2 = BiomeGenBase.taigaHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.megaTaiga.biomeID)
-                    {
-                        i2 = BiomeGenBase.megaTaigaHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.coldTaiga.biomeID)
-                    {
-                        i2 = BiomeGenBase.coldTaigaHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.plains.biomeID)
-                    {
-                        if (this.nextInt(3) == 0)
-                        {
-                            i2 = BiomeGenBase.forestHills.biomeID;
-                        }
-                        else
-                        {
-                            i2 = BiomeGenBase.forest.biomeID;
-                        }
-                    }
-                    else if (k1 == BiomeGenBase.icePlains.biomeID)
-                    {
-                        i2 = BiomeGenBase.iceMountains.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.jungle.biomeID)
-                    {
-                        i2 = BiomeGenBase.jungleHills.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.ocean.biomeID)
-                    {
-                        i2 = BiomeGenBase.deepOcean.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.extremeHills.biomeID)
-                    {
-                        i2 = BiomeGenBase.extremeHillsPlus.biomeID;
-                    }
-                    else if (k1 == BiomeGenBase.savanna.biomeID)
-                    {
-                        i2 = BiomeGenBase.savannaPlateau.biomeID;
-                    }
-                    else if (compareBiomesById(k1, BiomeGenBase.mesaPlateau_F.biomeID))
-                    {
-                        i2 = BiomeGenBase.mesa.biomeID;
-                    }
-                    // update to support multiple ocean and island biomes
-                    else if ( (k1 == BiomeGenBase.deepOcean.biomeID || isHLOcean(k1)) && this.nextInt(4) == 0) // was 3
-                    {
-                    	//islands                  	
-                    	j2 = this.nextInt(islandBiomeIDs.length);
-                    	i2 = islandBiomeIDs[j2];
+                    	//islands
+                    	i2 = getWeightedBiomeIDFromType(islandBiomes);
                     	
                     	flag = false; //crash fix ?
-                    	//Logs.log(Level.ERROR, "GenLayerHillsHL.islandBiome="+i2);
                     }
 
                     if (flag && i2 != k1)
                     {
-                    	// make apply to vanilla biomes only
-                        if (i2 < 40 && BiomeGenBase.getBiome(i2 + 128) != null)
-                        {
-                            i2 += 128;
-                        }
-                        else
-                        {
-                            i2 = k1;
-                        }
+                        if (AdvancedBiomeRegistry.biomeEntries[k1].subBiomes.length > 0) {
+                        	i2 = getWeightedBiomeIDFromType(AdvancedBiomeRegistry.biomeEntries[k1].subBiomes);
+                        	//Logs.log(Level.INFO, "placing sub-biome "+BiomeGenBase.getBiome(i2).biomeName);
+                    		// i2 = AdvancedBiomeRegistry.biomeEntries[k1].subBiomes[0].biome.biomeID;
+                    	}
+                    	else {
+                    		i2 = k1;
+                    	}
                     }
 
-                    if (i2 == k1)
+                    // set output
+                    if (i2 == k1) // if subbiome was already here, then leave it.
                     {
                         aint2[j1 + i1 * par3] = k1;
                     }
@@ -193,7 +136,8 @@ public class GenLayerHillsHL extends GenLayer
                             ++j3;
                         }
 
-                        if (j3 >= 3)
+                        if (j3 >= 3) // create subbiomes only where surrounding biomes are same parent
+                        	         // which means sub biomes cannot be on edges
                         {
                             aint2[j1 + i1 * par3] = i2;
                         }
@@ -203,64 +147,99 @@ public class GenLayerHillsHL extends GenLayer
                         }
                     }
                 }
+                // loop end
             }
         }
 
         return aint2;
     }
     
-    private void setIslandBiomes () {
-    	if (islandBiomeIDs != null) return;
-    	
-    	int[] available = new int[8];
-    	int total = 0;
-    	
-    	if (BiomeGenBase.plains != null) { // original GenLayerHills biome
-    		available[total] = BiomeGenBase.plains.biomeID;
-        	total++;
-    	}    	
-        if (HighlandsBiomes.jungleIsland != null) {
-        	available[total] = HighlandsBiomes.jungleIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.forestIsland != null) { // replaces original GenLayerHills biome
-        	available[total] = HighlandsBiomes.forestIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.desertIsland != null) {
-        	available[total] = HighlandsBiomes.desertIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.snowIsland != null) {
-        	available[total] = HighlandsBiomes.snowIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.volcanoIsland != null) {
-        	available[total] = HighlandsBiomes.volcanoIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.rockIsland != null) {
-        	available[total] = HighlandsBiomes.rockIsland.biomeID;
-        	total++;
-        }
-        if (HighlandsBiomes.windyIsland != null) {
-        	available[total] = HighlandsBiomes.windyIsland.biomeID;
-        	total++;
-        }
-        
-        islandBiomeIDs = new int[total];
-        int counter = 0;
-        for (int i=0; i<total; i++) {
-        	if (available[i] > 0) {
-        		islandBiomeIDs[counter] = available[i];
-        		counter++;
-        	}
-        }
-    }
-    
     private boolean isHLOcean(int biomeID){
     	if (HighlandsBiomes.ocean2 != null) {
     		return biomeID == HighlandsBiomes.ocean2.biomeID;
+    	}
+    	return false;
+    }
+    
+    private int getWeightedBiomeIDFromType(BiomeEntry[] biomeType)
+    {
+    	int total = (int)this.nextLong(WeightedRandom.getTotalWeight(biomeType));
+    	BiomeEntry biomeEntry = (BiomeEntry)WeightedRandom.getItem(biomeType, total);
+    	return biomeEntry.biome.biomeID;
+    }
+    
+    private boolean isOceanEdge(int[] aint, int j1, int i1, int par3) {
+    	// center biome
+    	int k1 = aint[j1 + 1 + (i1 + 1) * (par3 + 2)];
+    	// adjacent biomes
+    	int a1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
+        int a2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
+        int a3 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
+        int a4 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
+        // count valid matches with center
+        
+        int count = 0;
+        if (AdvancedBiomeRegistry.biomeEntries[a1] != null && AdvancedBiomeRegistry.biomeEntries[a1].type == "ocean")
+        {
+            ++count;
+        }
+
+        if (AdvancedBiomeRegistry.biomeEntries[a2] != null && AdvancedBiomeRegistry.biomeEntries[a2].type == "ocean")
+        {
+            ++count;
+        }
+
+        if (AdvancedBiomeRegistry.biomeEntries[a3] != null && AdvancedBiomeRegistry.biomeEntries[a3].type == "ocean")
+        {
+            ++count;
+        }
+
+        if (AdvancedBiomeRegistry.biomeEntries[a4] != null && AdvancedBiomeRegistry.biomeEntries[a4].type == "ocean")
+        {
+            ++count;
+        }
+
+        if (count == 4)
+        {
+        	return true;
+        }
+        
+    	return false;
+    }
+    
+    private boolean suitableForSubBiome (int k1, int l1) {
+    	// parent not ocean &&
+        // river not plains or ocean &&
+        // river is megaTaiga
+        // parent not sub biome
+        // sub-biomes go here
+
+    	// l1 calculations
+    	// 282347 -2 %29
+    	// = 282345 %29
+    	// = 1
+    	// However problems exist with vanilla Jungle Hills/Edges biomes
+    	// due to ID numbers matching
+    	
+    	
+    	if (!isOcean(k1) && l1 >= 2 && (l1 - 2) % 29 == 1){	
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private boolean isOcean (int id){
+    	for (int i=0; i<oceanBiomes.length; i++) {
+    		if (oceanBiomes[i].biome.biomeID == id) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private boolean isSubBiome (int id){
+    	if (AdvancedBiomeRegistry.biomeEntries[id].type == "sub") {
+    		return true;
     	}
     	return false;
     }

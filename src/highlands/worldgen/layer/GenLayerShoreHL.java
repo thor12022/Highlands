@@ -2,23 +2,28 @@ package highlands.worldgen.layer;
 
 //TODO: unused perhaps time to delete ?
 
+import fabricator77.multiworld.api.biomeregistry.AdvancedBiomeRegistry;
 import highlands.api.HighlandsBiomes;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenJungle;
 import net.minecraft.world.biome.BiomeGenMesa;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
 
 public class GenLayerShoreHL extends GenLayer
-{
-	public static boolean[] shoredBiomeList;
+{	
+	private BiomeEntry[] hillsBiomes;
+	private BiomeEntry[] islandBiomes;
+	private BiomeEntry[] oceanBiomes;
 	
     public GenLayerShoreHL(long par1, GenLayer par3GenLayer)
     {
         super(par1);
         this.parent = par3GenLayer;
-        shoredBiomeList = new boolean[BiomeGenBase.getBiomeGenArray().length];
-        initShoredBiomeList();
+        hillsBiomes = AdvancedBiomeRegistry.getBiomesOfType("hills");
+        islandBiomes = AdvancedBiomeRegistry.getBiomesOfType("island");
+        oceanBiomes = AdvancedBiomeRegistry.getBiomesOfType("ocean");
     }
 
     /**
@@ -41,121 +46,22 @@ public class GenLayerShoreHL extends GenLayer
                 int i2;
                 int j2;
                 int k2;
-
-                if (k1 == BiomeGenBase.mushroomIsland.biomeID)
+                
+                l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
+                i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
+                j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
+                k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
+                if (!isOceanAdjacent(l1, i2, j2, k2))
                 {
-                    l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
-                    i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
-                    j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
-                    k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
-
-                    if (!isOceanAdjacent(l1, i2, j2, k2))
-                    {
-                        aint1[j1 + i1 * par3] = k1;
-                    }
-                    else
-                    {
-                        aint1[j1 + i1 * par3] = BiomeGenBase.mushroomIslandShore.biomeID;
-                    }
+                	if (AdvancedBiomeRegistry.biomeEntries[k1].beachBiome != -1) {
+                		aint1[j1 + i1 * par3] = AdvancedBiomeRegistry.biomeEntries[k1].beachBiome;
+                	}
+                	else {
+                		aint1[j1 + i1 * par3] = k1;
+                	}
                 }
-                else if (biomegenbase != null && biomegenbase.getBiomeClass() == BiomeGenJungle.class)
-                {
-                    l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
-                    i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
-                    j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
-                    k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
-
-                    if (this.func_151631_c(l1) && this.func_151631_c(i2) && this.func_151631_c(j2) && this.func_151631_c(k2))
-                    {
-                        if (!isOceanAdjacent(l1, i2, j2, k2))
-                        {
-                            aint1[j1 + i1 * par3] = k1;
-                        }
-                        else
-                        {
-                            aint1[j1 + i1 * par3] = BiomeGenBase.beach.biomeID;
-                        }
-                    }
-                    else
-                    {
-                        aint1[j1 + i1 * par3] = BiomeGenBase.jungleEdge.biomeID;
-                    }
-                }
-                else if (k1 != BiomeGenBase.extremeHills.biomeID && k1 != BiomeGenBase.extremeHillsPlus.biomeID && k1 != BiomeGenBase.extremeHillsEdge.biomeID)
-                {
-                    if (biomegenbase != null && biomegenbase.func_150559_j()) // has snow
-                    {
-                        this.addCustomBeach(aint, aint1, j1, i1, par3, k1, BiomeGenBase.coldBeach.biomeID);
-                    }
-                    else if (k1 != BiomeGenBase.mesa.biomeID && k1 != BiomeGenBase.mesaPlateau_F.biomeID)
-                    {
-                    	if (!isOceanBiome(k1) && !isWateryBiome(k1) && !isHillsBiome(k1) && !isIslandBiome(k1))
-                        //if (k1 != BiomeGenBase.ocean.biomeID && k1 != BiomeGenBase.deepOcean.biomeID && k1 != BiomeGenBase.river.biomeID && k1 != BiomeGenBase.swampland.biomeID)
-                        {
-                            l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
-                            i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
-                            j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
-                            k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
-
-                            if (!isOceanAdjacent(l1, i2, j2, k2))
-                            {
-                                aint1[j1 + i1 * par3] = k1;
-                            }
-                            else
-                            {
-                                aint1[j1 + i1 * par3] = BiomeGenBase.beach.biomeID;
-                            }
-                        }
-                        else
-                        {
-                            aint1[j1 + i1 * par3] = k1;
-                        }
-                    }
-                    else if (!isIslandBiome(k1))
-                    {
-                    	l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
-                        i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
-                        j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
-                        k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
-                        
-                        
-
-                        if (!((l1 == k1 || l1 == HighlandsBiomes.ocean2.biomeID)
-                        		&& (i2 == k1 || i2 == HighlandsBiomes.ocean2.biomeID)
-                        		&& (j2 == k1 || i2 == HighlandsBiomes.ocean2.biomeID)
-                        		&& (k2 == k1 || i2 == HighlandsBiomes.ocean2.biomeID)
-                        		))
-                        {
-                        	aint1[j1 + i1 * par3] = HighlandsBiomes.ocean2.biomeID;
-                        }
-                    }
-                    else
-                    {
-                        l1 = aint[j1 + 1 + (i1 + 1 - 1) * (par3 + 2)];
-                        i2 = aint[j1 + 1 + 1 + (i1 + 1) * (par3 + 2)];
-                        j2 = aint[j1 + 1 - 1 + (i1 + 1) * (par3 + 2)];
-                        k2 = aint[j1 + 1 + (i1 + 1 + 1) * (par3 + 2)];
-
-                        if (!isOceanAdjacent(l1, i2, j2, k2))
-                        {
-                            if (this.func_151633_d(l1) && this.func_151633_d(i2) && this.func_151633_d(j2) && this.func_151633_d(k2))
-                            {
-                                aint1[j1 + i1 * par3] = k1;
-                            }
-                            else
-                            {
-                                aint1[j1 + i1 * par3] = BiomeGenBase.desert.biomeID;
-                            }
-                        }
-                        else
-                        {
-                            aint1[j1 + i1 * par3] = k1;
-                        }
-                    }
-                }
-                else
-                {
-                    this.addCustomBeach(aint, aint1, j1, i1, par3, k1, BiomeGenBase.stoneBeach.biomeID);
+                else {
+                	aint1[j1 + i1 * par3] = k1;
                 }
             }
         }
@@ -163,93 +69,21 @@ public class GenLayerShoreHL extends GenLayer
         return aint1;
     }
 
-    private void addCustomBeach(int[] aint, int[] aint1, int a, int b, int par5, int biomeID, int beachBiomeID)
-    {
-    	if (!isOceanAdjacent(biomeID, biomeID, biomeID, biomeID))
-        {
-            aint1[a + b * par5] = biomeID;
-        }
-        else
-        {
-            int j1 = aint[a + 1 + (b + 1 - 1) * (par5 + 2)];
-            int k1 = aint[a + 1 + 1 + (b + 1) * (par5 + 2)];
-            int l1 = aint[a + 1 - 1 + (b + 1) * (par5 + 2)];
-            int i2 = aint[a + 1 + (b + 1 + 1) * (par5 + 2)];
-
-            if (!isOceanAdjacent(j1, k1, l1, i2))
-            {
-                aint1[a + b * par5] = biomeID;
-            }
-            else
-            {
-                aint1[a + b * par5] = beachBiomeID;
-            }
-        }
-    }
-
-    private boolean func_151631_c(int p_151631_1_)
-    {
-        return BiomeGenBase.getBiome(p_151631_1_) != null && BiomeGenBase.getBiome(p_151631_1_).getBiomeClass() == BiomeGenJungle.class ? true : p_151631_1_ == BiomeGenBase.jungleEdge.biomeID || p_151631_1_ == BiomeGenBase.jungle.biomeID || p_151631_1_ == BiomeGenBase.jungleHills.biomeID || p_151631_1_ == BiomeGenBase.forest.biomeID || p_151631_1_ == BiomeGenBase.taiga.biomeID || isBiomeOceanic(p_151631_1_);
-    }
-
-    private boolean func_151633_d(int p_151633_1_)
-    {
-        return BiomeGenBase.getBiome(p_151633_1_) != null && BiomeGenBase.getBiome(p_151633_1_) instanceof BiomeGenMesa;
-    }
-    
-    // helper functions for biomes
-    private void initShoredBiomeList () {
-    	shoredBiomeList[HighlandsBiomes.ocean2.biomeID] = true;
-    	//watery biomes
-    	shoredBiomeList[BiomeGenBase.river.biomeID] = true;
-		shoredBiomeList[BiomeGenBase.swampland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.estuary.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.lake.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.bog.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.lowlands.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.tropicalIslands.biomeID] = true;
-		//cliffs/hills biomes
-		shoredBiomeList[BiomeGenBase.extremeHills.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.cliffs.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.woodsMountains.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.flyingMountains.biomeID] = true;
-		//islands
-		shoredBiomeList[HighlandsBiomes.jungleIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.forestIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.desertIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.snowIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.volcanoIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.rockIsland.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.windyIsland.biomeID] = true;
-		//mountains
-		shoredBiomeList[HighlandsBiomes.snowMountains.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.rockMountains.biomeID] = true;
-		shoredBiomeList[HighlandsBiomes.desertMountains.biomeID] = true;
-    }
-    
     private boolean isOceanAdjacent (int l1, int i2, int j2, int k2) {
-    	if (l1 == BiomeGenBase.ocean.biomeID || i2 == BiomeGenBase.ocean.biomeID || j2 == BiomeGenBase.ocean.biomeID || k2 == BiomeGenBase.ocean.biomeID) {
-    		return true;
-    	}
-    	if (l1 == BiomeGenBase.deepOcean.biomeID || i2 == BiomeGenBase.deepOcean.biomeID || j2 == BiomeGenBase.deepOcean.biomeID || k2 == BiomeGenBase.deepOcean.biomeID) {
-    		return true;
-    	}
-    	if (l1 == BiomeGenBase.frozenOcean.biomeID || i2 == BiomeGenBase.frozenOcean.biomeID || j2 == BiomeGenBase.frozenOcean.biomeID || k2 == BiomeGenBase.frozenOcean.biomeID) {
-    		return true;
-    	}
-    	if (l1 == HighlandsBiomes.ocean2.biomeID || i2 == HighlandsBiomes.ocean2.biomeID || j2 == HighlandsBiomes.ocean2.biomeID || k2 == HighlandsBiomes.ocean2.biomeID) {
-    		return true;
+    	for (int i=0; i<oceanBiomes.length; i++) {
+    		int oceanID = oceanBiomes[i].biome.biomeID;
+    		if (l1 == oceanID || i2 == oceanID || j2 == oceanID || k2 == oceanID) {
+    			return true;
+    		}
     	}
     	return false;
     }
     
     private boolean isOceanBiome (int biomeID ) {
-    	if (biomeID == BiomeGenBase.ocean.biomeID ||
-    		biomeID == BiomeGenBase.deepOcean.biomeID ||
-    		biomeID == BiomeGenBase.frozenOcean.biomeID ||
-        	biomeID == HighlandsBiomes.ocean2.biomeID)
-    	{
-    		return true;
+    	for (int i=0; i<oceanBiomes.length; i++) {
+    		if (oceanBiomes[i].biome.biomeID == biomeID) {
+    			return true;
+    		}
     	}
     	return false;
     }    
@@ -268,33 +102,19 @@ public class GenLayerShoreHL extends GenLayer
     }
     
     private boolean isHillsBiome (int biomeID ) {
-    	if (biomeID == BiomeGenBase.extremeHills.biomeID ||
-    		biomeID == HighlandsBiomes.cliffs.biomeID ||
-    		biomeID == HighlandsBiomes.woodsMountains.biomeID ||
-        	biomeID == HighlandsBiomes.flyingMountains.biomeID ||
-        	biomeID == HighlandsBiomes.snowMountains.biomeID ||
-        	biomeID == HighlandsBiomes.rockMountains.biomeID ||
-        	biomeID == HighlandsBiomes.desertMountains.biomeID ||
-        	biomeID == HighlandsBiomes.rockMountains.biomeID ||
-        	biomeID == HighlandsBiomes.steppe.biomeID ||
-        	biomeID == HighlandsBiomes.glacier.biomeID
-        )
-    	{
-    		return true;
+    	for (int i=0; i<hillsBiomes.length; i++) {
+    		if (hillsBiomes[i].biome.biomeID == biomeID) {
+    			return true;
+    		}
     	}
     	return false;
     }
     
     private boolean isIslandBiome (int biomeID ) {
-    	if (biomeID == HighlandsBiomes.jungleIsland.biomeID ||
-    		biomeID == HighlandsBiomes.forestIsland.biomeID ||
-    		biomeID == HighlandsBiomes.desertIsland.biomeID ||
-        	biomeID == HighlandsBiomes.snowIsland.biomeID ||
-        	biomeID == HighlandsBiomes.volcanoIsland.biomeID ||
-        	biomeID == HighlandsBiomes.rockIsland.biomeID ||
-        	biomeID == HighlandsBiomes.windyIsland.biomeID)
-    	{
-    		return true;
+    	for (int i=0; i<islandBiomes.length; i++) {
+    		if (islandBiomes[i].biome.biomeID == biomeID) {
+    			return true;
+    		}
     	}
     	return false;
     }

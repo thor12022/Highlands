@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.Loader;
+import fabricator77.multiworld.api.biomeregistry.BoPBiomeSupport;
 import highlands.api.*;
 import highlands.integration.HighlandsCompatibilityManager;
+import highlands.integration.MultiWorldSupport;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.gen.structure.MapGenStronghold;
@@ -60,8 +62,7 @@ public class Highlands {
 	
 	public static int islandRarity = 14;
     
-    //highlands in default flag
-    public static boolean highlandsInDefaultFlag = false;
+	public static boolean addBoPbiomes = false;
     
     public static boolean useOreGens = true;
     public static boolean useGenLayers = true;
@@ -95,8 +96,12 @@ public class Highlands {
 		Initializer.constructBiomes();
 		Initializer.constructSettings();
 		
-		HL = new WorldTypeHighlands("Highlands");
-		HLLB = new WorldTypeHighlands("HighlandsLB");
+		//set up sub-biomes
+		Initializer.setUpAllSubBiomes();
+		
+		new MultiWorldSupport();
+		if (Highlands.addBoPbiomes) new BoPBiomeSupport();
+		
 		//register event manager
 		MinecraftForge.TERRAIN_GEN_BUS.register(new HighlandsEventManager());
 		MinecraftForge.EVENT_BUS.register(new HighlandsEventManager());
@@ -110,24 +115,23 @@ public class Highlands {
 		//initiate all recipes and ore dictionary definitions
 		
 		
-		//set up sub-biomes
-		Initializer.setUpAllSubBiomes();
+		
 		
 		proxy.registerRenderers();
 	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		HL = new WorldTypeHighlands("Highlands");
+		HLLB = new WorldTypeHighlands("HighlandsLB");
+		
 		MapGenStructureConfig.postInit();
-		//TODO- readd compat
+
 		//BiomeDictionary PostInit
 		HighlandsCompatibilityManager.registerBiomesForgeBiomeDict();
 		
 		GameRegistry.registerFuelHandler(new HighlandsFuelHandler());
 		
-//		Block.blocksList[Block.cocoaPlant.blockID] = null;
-//		HighlandsBlocks.cocoa2 = new BlockCocoaPlant2(Block.cocoaPlant.blockID).setHardness(0.2F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep).setUnlocalizedName("cocoa");
-
 		//Forestry PostInit
   		if (Loader.isModLoaded("Forestry") ){
  			try {

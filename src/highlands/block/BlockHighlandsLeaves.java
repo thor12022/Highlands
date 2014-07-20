@@ -10,6 +10,8 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
+import powercrystals.minefactoryreloaded.api.HarvestType;
+import powercrystals.minefactoryreloaded.api.IFactoryHarvestable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.block.material.Material;
@@ -25,10 +27,12 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockHighlandsLeaves extends BlockLeavesBase implements IShearable
+@Optional.Interface(iface = "IFactoryHarvestable", modid = "MineFactoryReloaded")
+public class BlockHighlandsLeaves extends BlockLeavesBase implements IShearable, IFactoryHarvestable
 {
 	private String[] treeNames = 
 		{
@@ -277,7 +281,7 @@ public class BlockHighlandsLeaves extends BlockLeavesBase implements IShearable
      * Returns the items to drop on destruction.
      */
     @Override
-    public Item getItemDropped(int par1, Random par2Random, int par3)
+    public Item getItemDropped(int metadata, Random par2Random, int fortune)
     {
     	if(treeType == 0)return Item.getItemFromBlock(HighlandsBlocks.firSapling);
     	if(treeType == 1)return Item.getItemFromBlock(HighlandsBlocks.acaciaSapling);
@@ -490,46 +494,56 @@ public class BlockHighlandsLeaves extends BlockLeavesBase implements IShearable
         return true;
     }
 
-    //TODO- MFR isn't 1.7.x yet
-//	//// MFR : IFactoryHarvestable
-//	@Override
-//	public int getPlantId() {
-//		return blockID;
-//	}
-//
-//	@Override
-//	public HarvestType getHarvestType() {
-//		return HarvestType.TreeLeaf;
-//	}
-//
-//	@Override
-//	public boolean breakBlock() {
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean canBeHarvested(World world, Map<String, Boolean> harvesterSettings, int x, int y, int z) {
-//		return true;
-//	}
-//
-//	@Override
-//	public List<ItemStack> getDrops(World world, Random rand, Map<String, Boolean> harvesterSettings, int x, int y, int z) {
-//		List<ItemStack> prod = new ArrayList<ItemStack>();
-//
-//		if (harvesterSettings.get("silkTouch") != null && harvesterSettings.get("silkTouch")) {
-//			prod.add( new ItemStack(blockID, 1, 0) );
-//			return prod;
-//		}
-//		return Block.blocksList[ world.getBlockId(x,y,z) ].getBlockDropped(world, x,y,z, world.getBlockMetadata(x,y,z), 0);
-//	}
-//
-//	@Override
-//	public void preHarvest(World world, int x, int y, int z) {
-//	}
-//
-//	@Override
-//	public void postHarvest(World world, int x, int y, int z) {
-//	}
+    // MFR : IFactoryHarvestable
+    @Optional.Method(modid = "MineFactoryReloaded")
+    @Override
+  	public Block getPlant() {
+  		return this;
+	}
+
+    @Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public HarvestType getHarvestType() {
+		return HarvestType.TreeLeaf;
+	}
+
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public boolean breakBlock() {
+		return true;
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public boolean canBeHarvested(World world, Map<String, Boolean> harvesterSettings, int x, int y, int z) {
+		return true;
+	}
+
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public List<ItemStack> getDrops(World world, Random rand, Map<String, Boolean> harvesterSettings, int x, int y, int z) {
+		List<ItemStack> prod = new ArrayList<ItemStack>();
+		
+		if (harvesterSettings.get("silkTouch") != null && harvesterSettings.get("silkTouch")) {
+			prod.add( new ItemStack(this, 1, 0) );
+			return prod;
+		}
+		//return Block.getBlockDropped(world, x,y,z, world.getBlockMetadata(x,y,z), 0);
+		prod.add(new ItemStack(this.getItemDropped(0,world.rand,0), 1, 0));
+		return prod;
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public void preHarvest(World world, int x, int y, int z) {
+		// nothing
+	}
+
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public void postHarvest(World world, int x, int y, int z) {
+		//nothing
+	}
 
 
 }

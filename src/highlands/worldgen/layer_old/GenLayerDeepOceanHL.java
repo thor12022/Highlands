@@ -1,4 +1,4 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
 import highlands.api.HighlandsBiomes;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -7,6 +7,7 @@ import net.minecraft.world.gen.layer.IntCache;
 
 public class GenLayerDeepOceanHL extends GenLayer
 {
+    private static final String __OBFID = "CL_00000546";
 
     public GenLayerDeepOceanHL(long p_i45472_1_, GenLayer p_i45472_3_)
     {

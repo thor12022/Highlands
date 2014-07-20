@@ -79,7 +79,7 @@ public class Config
 	public static Property islandRarity;
 	public static Property biomeSize;
 	public static Property LBbiomeSize;
-	public static Property genDefault;
+	public static Property addBoPbiomes;
 	public static Property skyColors;
 	public static Property modWoodAndLeaves;
 	public static Property smallPlants;
@@ -101,8 +101,6 @@ public class Config
 	
 	private static void addBiomeEntries(Configuration config) 
 	{
-		//FIXME: Biome IDs conflict with other mods/vanilla
-		
 		alpsID = config.get(CATEGORY_BIOME_ID, "Alps ID", 200).getInt();
 		autumnForestID = config.get(CATEGORY_BIOME_ID, "Autumn Forest ID", 201).getInt();
 		badlandsID = config.get(CATEGORY_BIOME_ID, "Badlands ID", 202).getInt();
@@ -174,9 +172,9 @@ public class Config
 		biomeSize.comment = "Biome size in Highlands worlds - 4 is default (same as Default worldtype)";
 		LBbiomeSize = config.get(config.CATEGORY_GENERAL, "Large Biomes Biome Size", 6);
 		LBbiomeSize.comment = "Biome size in Highlands LB worlds - 6 is default (same as Large Biomes worldtype)";
-		genDefault = config.get(config.CATEGORY_GENERAL, "Highands biomes in Default worlds", false);
-		//genDefault.comment = "Should Highlands generate in the Default and Large Biomes worldtype (for compatibilty with other biome and worldgen mods)";
-		genDefault.comment = "Not available in 1.7.x due to vanilla changes, will NOT fix yet.";
+		addBoPbiomes = config.get(config.CATEGORY_GENERAL, "Add BoP biomes to Highlands worlds", false);
+		addBoPbiomes.comment = "Generate Biomes o' Plenty biomes in Highlands worlds";
+		
 		skyColors = config.get(config.CATEGORY_GENERAL, "Sky Colors", false);
 		skyColors.comment = "Use custom sky colors?";
 		modWoodAndLeaves = config.get(config.CATEGORY_GENERAL, "Highlands Wood and Leaves", true);

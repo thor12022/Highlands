@@ -16,11 +16,7 @@ import fabricator77.multiworld.api.IMWWorldType;
 import highlands.api.HighlandsBiomes;
 import highlands.api.HighlandsBlocks;
 import highlands.block.BlockHighlandsSapling;
-//import highlands.worldgen.layer.GenLayerHL;
 
-import highlands.worldgen.layer.GenLayerBiomeHL;
-import highlands.worldgen.layer.GenLayerHL;
-import highlands.worldgen.layer.TerrainGenInjector;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -65,7 +61,7 @@ public class HighlandsEventManager {
 	// Adds village spawning to Highlands worlds and default worlds if Highlands is enabled.
     @SubscribeEvent
 	public void onWorldStart(Load e){
-		if(e.world.provider.terrainType == Highlands.HL || e.world.provider.terrainType == Highlands.HLLB || Highlands.highlandsInDefaultFlag){
+		if(e.world.provider.terrainType == Highlands.HL || e.world.provider.terrainType == Highlands.HLLB){
 			ArrayList<BiomeGenBase> newTotalVillageBiomes = new ArrayList<BiomeGenBase>();
 			newTotalVillageBiomes.addAll(MapGenVillage.villageSpawnBiomes);
 			newTotalVillageBiomes.addAll(MapGenStructureConfig.hlvillagebiomes);
@@ -91,13 +87,18 @@ public class HighlandsEventManager {
 	}
 	
 	// Initiates the new GenLayers
+    /**
     @SubscribeEvent
     public void onInitBiomeGenerators(WorldTypeEvent.InitBiomeGens event) {
     	if (event.worldType instanceof IMWWorldType) {
 			//event.newBiomeGens = TerrainGenInjector.assembleModdedBiomeGenerators(event.seed, event.worldType);
-			event.newBiomeGens = GenLayerBiomeHL.initializeAllBiomeGenerators(event.seed, event.worldType);
+			// event.newBiomeGens = GenLayerBiomeHL.initializeAllBiomeGenerators(event.seed, event.worldType)
 		}
+    	Logs.log(Level.INFO, "[Highlands] WorldTypeEvent.InitBiomeGens="+event.originalBiomeGens);
+    	event.newBiomeGens = event.originalBiomeGens;
+    	event.setResult(Result.ALLOW);
     }
+    */
 
 	
 	/*
@@ -117,7 +118,7 @@ public class HighlandsEventManager {
     @SubscribeEvent
 	public void onDecorateLakes2(Populate e){
 		if(e.type == Populate.EventType.LAKE && 
-				(e.world.provider.terrainType == Highlands.HL || e.world.provider.terrainType == Highlands.HLLB || Highlands.highlandsInDefaultFlag)){
+				(e.world.provider.terrainType == Highlands.HL || e.world.provider.terrainType == Highlands.HLLB)){
 			e.setResult(Event.Result.DENY);
 			//System.out.println("Stopped a tiny pond from generating");
 		}

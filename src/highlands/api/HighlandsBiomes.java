@@ -94,7 +94,7 @@ public class HighlandsBiomes {
      * @param biome the biome to add the creature to.  Only works with these biomes, not vanilla or other mods' biomes.
      * @param creature the creature to add
      */
-    public static void addCreature(BiomeGenBaseHighlands biome, EntityCreature creature){
+    public static void addCreature(IHighlandsBiome biome, EntityCreature creature){
     	List creatureList = biome.getSpawnableList(EnumCreatureType.creature);
     	creatureList.add(creature);
     	biome.setSpawnLists(
@@ -104,7 +104,7 @@ public class HighlandsBiomes {
 				);
     }
     
-    public static void addMob(BiomeGenBaseHighlands biome, EntityMob mob){
+    public static void addMob(IHighlandsBiome biome, EntityMob mob){
     	List mobList = biome.getSpawnableList(EnumCreatureType.monster);
     	mobList.add(mob);
     	biome.setSpawnLists(
@@ -114,7 +114,7 @@ public class HighlandsBiomes {
 				);
     }
     
-    public static void addWaterCreature(BiomeGenBaseHighlands biome, EntityCreature creature){
+    public static void addWaterCreature(IHighlandsBiome biome, EntityCreature creature){
     	List waterCreatureList = biome.getSpawnableList(EnumCreatureType.waterCreature);
     	waterCreatureList.add(creature);
     	biome.setSpawnLists(

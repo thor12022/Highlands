@@ -1,23 +1,19 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
-import fabricator77.multiworld.api.biomeregistry.AdvancedBiomeRegistry;
 import highlands.api.HighlandsBiomes;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
-import net.minecraftforge.common.BiomeManager.BiomeEntry;
 
 public class GenLayerAddIslandHL extends GenLayer
 {
-	private BiomeEntry[] islandBiomes;
-	private BiomeEntry[] oceanBiomes;
+	private int[] islandBiomeIDs;
 
     public GenLayerAddIslandHL(long par1, GenLayer par3GenLayer)
     {
         super(par1);
         this.parent = par3GenLayer;
-        oceanBiomes = AdvancedBiomeRegistry.getBiomesOfType("ocean");
-        islandBiomes = AdvancedBiomeRegistry.getBiomesOfType("island");
+        setIslandBiomes();
     }
 
     /**
@@ -118,19 +114,64 @@ public class GenLayerAddIslandHL extends GenLayer
     
     protected boolean isIslandBiome (int id) {
     	if (id == BiomeGenBase.forest.biomeID) return true; // original uses forest only (ID 4)
-    	for (int i=0; i<islandBiomes.length; i++) {
-    		if (islandBiomes[i].biome.biomeID == id) {
+    	for (int i=0; i<islandBiomeIDs.length; i++) {
+    		if (islandBiomeIDs[i] == id) {
     			return true;
     		}
     	}
     	return false;
     }
+    private void setIslandBiomes () {
+    	if (islandBiomeIDs != null) return;
+    	
+    	int[] available = new int[7];
+    	
+    	int total = 0;
+        if (HighlandsBiomes.jungleIsland != null) {
+        	available[total] = HighlandsBiomes.jungleIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.forestIsland != null) {
+        	available[total] = HighlandsBiomes.forestIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.desertIsland != null) {
+        	available[total] = HighlandsBiomes.desertIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.snowIsland != null) {
+        	available[total] = HighlandsBiomes.snowIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.volcanoIsland != null) {
+        	available[total] = HighlandsBiomes.volcanoIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.rockIsland != null) {
+        	available[total] = HighlandsBiomes.rockIsland.biomeID;
+        	total++;
+        }
+        if (HighlandsBiomes.windyIsland != null) {
+        	available[total] = HighlandsBiomes.windyIsland.biomeID;
+        	total++;
+        }
+        
+        islandBiomeIDs = new int[total];
+        int counter = 0;
+        for (int i=0; i<total; i++) {
+        	if (available[i] > 0) {
+        		islandBiomeIDs[counter] = available[i];
+        		counter++;
+        	}
+        }
+    }
     
     protected boolean isOceanBiome (int id) {
-    	for (int i=0; i<oceanBiomes.length; i++) {
-    		if (oceanBiomes[i].biome.biomeID == id) {
-    			return true;
-    		}
+    	if (id == 0 || id == BiomeGenBase.deepOcean.biomeID)  {
+    		return true;
+    	}
+    	if (HighlandsBiomes.ocean2 != null) {
+    		return (id == HighlandsBiomes.ocean2.biomeID);
     	}
     	return false;
     }

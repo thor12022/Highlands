@@ -2,94 +2,47 @@ package highlands.worldgen.layer;
 
 import org.apache.logging.log4j.Level;
 
+import fabricator77.multiworld.api.biomeregistry.AdvancedBiomeRegistry;
 import highlands.Highlands;
 import highlands.Logs;
 import highlands.api.HighlandsBiomes;
+import highlands.integration.BoPBiomeLayerHelper;
 
 import com.google.common.collect.ObjectArrays;
 
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerEdge;
 import net.minecraft.world.gen.layer.IntCache;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
 
 public class GenLayerBiomeHL extends GenLayer
 {
-    private BiomeGenBase[] heatBiomes; // field_151623_c
-    private BiomeGenBase[] warmBiomes; // field_151621_d
-    private BiomeGenBase[] coolBiomes; // field_151622_e
-    private BiomeGenBase[] iceBiomes;  // field_151620_f
+    private BiomeEntry[] hotBiomes; // field_151623_c
+    private BiomeEntry[] warmBiomes; // field_151621_d
+    private BiomeEntry[] coolBiomes; // field_151622_e
+    private BiomeEntry[] iceBiomes;  // field_151620_f
 
     public GenLayerBiomeHL(long par1, GenLayer par3GenLayer, WorldType par4WorldType)
     {
         super(par1);
         // Heat biomes
-        this.heatBiomes = new BiomeGenBase[] {
-        	BiomeGenBase.desert, BiomeGenBase.desert, BiomeGenBase.desert,
-        	BiomeGenBase.savanna, BiomeGenBase.savanna, BiomeGenBase.plains,
-        	BiomeGenBase.mesaPlateau_F // mod add mesaPlateau_F
-        };
+        this.hotBiomes = AdvancedBiomeRegistry.getBiomesOfType("hot");
         // Warm biomes
-        this.warmBiomes = new BiomeGenBase[] {
-        	BiomeGenBase.forest, BiomeGenBase.roofedForest, BiomeGenBase.extremeHills, BiomeGenBase.plains,
-        	BiomeGenBase.birchForest, BiomeGenBase.swampland, BiomeGenBase.jungle // mod add jungle
-        };
+        this.warmBiomes = AdvancedBiomeRegistry.getBiomesOfType("warm");
         // Cool biomes
-        this.coolBiomes = new BiomeGenBase[] {
-        	BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.taiga, BiomeGenBase.plains,
-        	BiomeGenBase.megaTaiga // mod add megaTaiga
-        };
+        this.coolBiomes = AdvancedBiomeRegistry.getBiomesOfType("cool");
         // Ice Biomes
-        this.iceBiomes = new BiomeGenBase[] {
-        	BiomeGenBase.icePlains, BiomeGenBase.icePlains, BiomeGenBase.icePlains, BiomeGenBase.coldTaiga
-        };
+        this.iceBiomes = AdvancedBiomeRegistry.getBiomesOfType("ice");
         this.parent = par3GenLayer;
-
-        if (par4WorldType == WorldType.DEFAULT_1_1)
-        {
-            this.heatBiomes = new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.plains, BiomeGenBase.taiga};
-        }
         
         // mod
         if (HighlandsBiomes.biomesForHighlands.size() == 0) {
         	Logs.log(Level.FATAL, "[Highlands] no biomes loaded");
         	return;
         }
-        
-        addBiome(HighlandsBiomes.woodsMountains, Mode.WARM);
-        addBiome(HighlandsBiomes.highlandsb, Mode.WARM);
-        addBiome(HighlandsBiomes.tundra, Mode.ICE);
-        addBiome(HighlandsBiomes.cliffs, Mode.WARM);
-        addBiome(HighlandsBiomes.pinelands, Mode.WARM);
-        addBiome(HighlandsBiomes.autumnForest, Mode.WARM);
-        addBiome(HighlandsBiomes.alps, Mode.ICE);
-        addBiome(HighlandsBiomes.tallPineForest, Mode.WARM);
-        addBiome(HighlandsBiomes.meadow, Mode.WARM);
-        addBiome(HighlandsBiomes.savannah, Mode.HEAT);       
-        addBiome(HighlandsBiomes.tropics, Mode.HEAT);
-        addBiome(HighlandsBiomes.outback, Mode.HEAT);
-        addBiome(HighlandsBiomes.woodlands, Mode.WARM);
-        addBiome(HighlandsBiomes.bog, Mode.COOL);
-        addBiome(HighlandsBiomes.redwoodForest, Mode.WARM);
-        addBiome(HighlandsBiomes.dunes, Mode.HEAT);
-        addBiome(HighlandsBiomes.lowlands, Mode.WARM);
-        addBiome(HighlandsBiomes.sahel, Mode.WARM);
-        addBiome(HighlandsBiomes.birchHills, Mode.WARM);
-        addBiome(HighlandsBiomes.tropicalIslands, Mode.HEAT);
-        addBiome(HighlandsBiomes.rainforest, Mode.HEAT);
-        addBiome(HighlandsBiomes.estuary, Mode.WARM);
-        addBiome(HighlandsBiomes.badlands, Mode.HEAT);
-        addBiome(HighlandsBiomes.flyingMountains, Mode.WARM);
-        addBiome(HighlandsBiomes.snowMountains, Mode.ICE);
-        addBiome(HighlandsBiomes.rockMountains, Mode.WARM);
-        addBiome(HighlandsBiomes.desertMountains, Mode.WARM);
-        addBiome(HighlandsBiomes.steppe, Mode.COOL);
-        addBiome(HighlandsBiomes.glacier, Mode.ICE);
-        
-        //if (ModSettings.biomesOPlentyInstalled) {
-        	// BopBiomes.addBoPbiomes(this);
-        //}
     }
 
     /**
@@ -124,33 +77,28 @@ public class GenLayerBiomeHL extends GenLayer
                 {
                     aint1[j1 + i1 * par3] = k1;
                 }
-                // plains
+                // if plains
                 else if (k1 == 1)
                 {
-                    aint1[j1 + i1 * par3] = this.heatBiomes[this.nextInt(this.heatBiomes.length)].biomeID;
-                    // mod
-                    if (aint1[j1 + i1 * par3] == BiomeGenBase.mesaPlateau_F.biomeID && this.nextInt(3) == 0) {
-                    	aint1[j1 + i1 * par3] = BiomeGenBase.mesaPlateau.biomeID;
-                    }
+                	aint1[j1 + i1 * par3] = getWeightedBiomeIDFromType(this.hotBiomes);
                 }
-                // desert
+                // if desert
                 else if (k1 == 2)
                 {
-                	aint1[j1 + i1 * par3] = this.warmBiomes[this.nextInt(this.warmBiomes.length)].biomeID;
+                	aint1[j1 + i1 * par3] = getWeightedBiomeIDFromType(this.warmBiomes);
                 }
-                // extreme hills
+                // if extreme hills
                 else if (k1 == 3)
                 {
-                    aint1[j1 + i1 * par3] = this.coolBiomes[this.nextInt(this.coolBiomes.length)].biomeID;
+                    aint1[j1 + i1 * par3] = getWeightedBiomeIDFromType(this.coolBiomes);
                 }
                 // forest
                 else if (k1 == 4)
                 {
-                    aint1[j1 + i1 * par3] = this.iceBiomes[this.nextInt(this.iceBiomes.length)].biomeID;
+                	aint1[j1 + i1 * par3] = getWeightedBiomeIDFromType(this.iceBiomes);
                 }
                 else
                 {
-                	// put code for mod Island Biomes here ???
                     aint1[j1 + i1 * par3] = BiomeGenBase.mushroomIsland.biomeID;
                 }
             }
@@ -159,21 +107,12 @@ public class GenLayerBiomeHL extends GenLayer
         return aint1;
     }
     
-    // Custom mod
-    public void addBiome (BiomeGenBase biome, Mode mode) {
-    	if (biome == null) return;
-    	switch (mode.ordinal())
-        {
-            case 0:
-            	this.heatBiomes = ObjectArrays.concat(this.heatBiomes, biome); return;
-            default:
-            case 1:
-            	this.warmBiomes = ObjectArrays.concat(this.warmBiomes, biome); return;
-            case 2:
-            	this.coolBiomes = ObjectArrays.concat(this.coolBiomes, biome); return;
-            case 3:
-            	this.iceBiomes = ObjectArrays.concat(this.iceBiomes, biome); return;
-        }
+    private int getWeightedBiomeIDFromType(BiomeEntry[] biomeType)
+    {
+    	if (biomeType.length == 0) return 1;
+    	int total = (int)this.nextLong(WeightedRandom.getTotalWeight(biomeType));
+    	BiomeEntry biomeEntry = (BiomeEntry)WeightedRandom.getItem(biomeType, total);
+    	return biomeEntry.biome.biomeID;
     }
     
     /**
@@ -185,13 +124,5 @@ public class GenLayerBiomeHL extends GenLayer
     		return true;
     	}
         return biomeID == BiomeGenBase.ocean.biomeID || biomeID == BiomeGenBase.deepOcean.biomeID || biomeID == BiomeGenBase.frozenOcean.biomeID;
-    }
-    
-    public static enum Mode
-    {
-    	HEAT,
-    	WARM,
-        COOL,
-        ICE
     }
 }

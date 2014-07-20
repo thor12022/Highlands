@@ -1,17 +1,16 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
 import highlands.api.HighlandsBiomes;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-public class GenLayerDeepOceanHL extends GenLayer
+public class GenLayerRemoveTooMuchOceanHL extends GenLayer
 {
-
-    public GenLayerDeepOceanHL(long p_i45472_1_, GenLayer p_i45472_3_)
+    public GenLayerRemoveTooMuchOceanHL(long p_i45480_1_, GenLayer p_i45480_3_)
     {
-        super(p_i45472_1_);
-        this.parent = p_i45472_3_;
+        super(p_i45480_1_);
+        this.parent = p_i45480_3_;
     }
 
     /**
@@ -26,7 +25,7 @@ public class GenLayerDeepOceanHL extends GenLayer
         int l1 = par4 + 2;
         int[] aint = this.parent.getInts(i1, j1, k1, l1);
         int[] aint1 = IntCache.getIntCache(par3 * par4);
-        int oceanBiomeID = BiomeGenBase.ocean.biomeID;
+        // int oceanBiomeID = BiomeGenBase.ocean.biomeID;
         //int oceanBiomeID = HighlandsBiomes.ocean2.biomeID;
 
         for (int i2 = 0; i2 < par4; ++i2)
@@ -38,35 +37,14 @@ public class GenLayerDeepOceanHL extends GenLayer
                 int i3 = aint[j2 + 1 - 1 + (i2 + 1) * (par3 + 2)];
                 int j3 = aint[j2 + 1 + (i2 + 1 + 1) * (par3 + 2)];
                 int k3 = aint[j2 + 1 + (i2 + 1) * k1];
-                int l3 = 0;
-
-                if (k2 == oceanBiomeID)
+                aint1[j2 + i2 * par3] = k3;
+                this.initChunkSeed((long)(j2 + par1), (long)(i2 + par2));
+                
+                // replaces ocean with plains
+                // Improved ocean added later in GenLayer stack
+                if (k3 == 0 && k2 == 0 && l2 == 0 && i3 == 0 && j3 == 0 && this.nextInt(2) == 0)
                 {
-                    ++l3;
-                }
-
-                if (l2 == oceanBiomeID)
-                {
-                    ++l3;
-                }
-
-                if (i3 == oceanBiomeID)
-                {
-                    ++l3;
-                }
-
-                if (j3 == oceanBiomeID)
-                {
-                    ++l3;
-                }
-
-                if (k3 == oceanBiomeID && l3 > 3)
-                {
-                    aint1[j2 + i2 * par3] = BiomeGenBase.deepOcean.biomeID;
-                }
-                else
-                {
-                    aint1[j2 + i2 * par3] = k3;
+                    aint1[j2 + i2 * par3] = 1;
                 }
             }
         }

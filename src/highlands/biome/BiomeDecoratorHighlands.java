@@ -64,21 +64,20 @@ public class BiomeDecoratorHighlands extends BiomeDecorator
 		this.decorate(world, random, (BiomeGenBaseHighlands)biome, x, z);
 	}
 	
-	private void decorate(World par1World, Random par2Random, BiomeGenBaseHighlands biome, int par3, int par4){
-		super.decorateChunk(par1World, par2Random, (BiomeGenBase)biome, par3, par4);
-		
+	private void decorate(World par1World, Random par2Random, BiomeGenBaseHighlands biome, int x, int z){
 		if (this.currentWorld != null)
         {
-            //throw new RuntimeException("Already decorating!!");
+            throw new RuntimeException("Already decorating!! at:"+x+","+z);
         }
-        else
-        {
-            this.currentWorld = par1World;
-            this.randomGenerator = par2Random; 
-        }
+
+		super.decorateChunk(par1World, par2Random, (BiomeGenBase)biome, x, z);
+		this.currentWorld = par1World;
+        this.randomGenerator = par2Random; 
+        
+		// 
 		
-		this.chunk_X = par3;
-        this.chunk_Z = par4;
+		this.chunk_X = x;
+        this.chunk_Z = z;
         
         if (biome == HighlandsBiomes.autumnForest || biome == HighlandsBiomes.bog)
         {

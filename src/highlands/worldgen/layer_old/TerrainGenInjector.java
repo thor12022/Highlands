@@ -1,9 +1,8 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
 import highlands.Logs;
-import highlands.worldgen.layer.GenLayerHillsHL;
-import highlands.worldgen.layer.GenLayerIslandHL;
-import highlands.worldgen.layer.GenLayerRareBiomeHL;
+import highlands.worldgen.layer_old.GenLayerHillsHL;
+import highlands.worldgen.layer_old.GenLayerIslandHL;
 
 import org.apache.logging.log4j.Level;
 
@@ -79,7 +78,7 @@ public final class TerrainGenInjector
         GenLayerRiver genlayerriver = new GenLayerRiver(1L, genlayer);
         GenLayerSmooth genlayersmooth = new GenLayerSmooth(1000L, genlayerriver);
         //object = new GenLayerRareBiome(1001L, genlayerhills);
-        object = new GenLayerRareBiomeHL(1001L, genlayerhills);
+        object = new GenLayerRareBiome(1001L, genlayerhills);
 
         for (int j = 0; j < b0; ++j)
         {

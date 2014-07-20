@@ -8,13 +8,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+import net.minecraft.world.gen.feature.WorldGenSavannaTree;
 import net.minecraft.world.gen.feature.WorldGenTallGrass;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import highlands.api.HighlandsBlocks;
 import highlands.Highlands;
 import highlands.worldgen.WorldGenHighlandsShrub;
 import highlands.worldgen.WorldGenSmallPlants;
-import highlands.worldgen.WorldGenTreeAcacia;
+//import highlands.worldgen.WorldGenTreeAcacia;
 
 public class BiomeGenSahel extends BiomeGenBaseHighlands
 {
@@ -55,8 +56,9 @@ public class BiomeGenSahel extends BiomeGenBaseHighlands
     @Override
     public WorldGenAbstractTree func_150567_a(Random par1Random)
     {
-        return (WorldGenAbstractTree)(par1Random.nextInt(3) == 0 ? 
-        		new WorldGenTreeAcacia(7, 3, false) : new WorldGenHighlandsShrub(0, 0));
+        return (WorldGenAbstractTree)(par1Random.nextInt(6) != 0 ?
+        		new WorldGenSavannaTree(false) : new WorldGenHighlandsShrub(0, 0));
+        		//new WorldGenTreeAcacia(7, 3, false) : new WorldGenHighlandsShrub(0, 0));
     }
 
     @Override

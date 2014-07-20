@@ -1,4 +1,4 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
 import highlands.Logs;
 
@@ -78,32 +78,32 @@ public class GenLayerHL extends GenLayer
 
         GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer3, 0);
         GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
-        Object genLayerBiome = par2WorldType.getBiomeLayer(par0, genlayer3);
+        Object object = par2WorldType.getBiomeLayer(par0, genlayer3);
 
         GenLayer genlayer1 = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
-        GenLayerHillsHL genlayerhills = new GenLayerHillsHL(1000L, (GenLayer)genLayerBiome, genlayer1);
+        GenLayerHillsHL genlayerhills = new GenLayerHillsHL(1000L, (GenLayer)object, genlayer1);
         genlayer = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
         genlayer = GenLayerZoom.magnify(1000L, genlayer, b0);
         GenLayerRiver genlayerriver = new GenLayerRiver(1L, genlayer);
         GenLayerSmooth genlayersmooth = new GenLayerSmooth(1000L, genlayerriver);
-        genLayerBiome = new GenLayerRareBiome(1001L, genlayerhills);
+        object = new GenLayerRareBiome(1001L, genlayerhills);
 
         for (int j = 0; j < b0; ++j)
         {
-            genLayerBiome = new GenLayerZoom((long)(1000 + j), (GenLayer)genLayerBiome);
+            object = new GenLayerZoom((long)(1000 + j), (GenLayer)object);
 
             if (j == 0)
             {
-                genLayerBiome = new GenLayerAddIsland(3L, (GenLayer)genLayerBiome);
+                object = new GenLayerAddIsland(3L, (GenLayer)object);
             }
 
             if (j == 1)
             {
-                genLayerBiome = new GenLayerShore(1000L, (GenLayer)genLayerBiome);
+                object = new GenLayerShore(1000L, (GenLayer)object);
             }
         }
 
-        GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, (GenLayer)genLayerBiome);
+        GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, (GenLayer)object);
         GenLayerRiverMix genlayerrivermix = new GenLayerRiverMix(100L, genlayersmooth1, genlayersmooth);
         GenLayerVoronoiZoom genlayervoronoizoom = new GenLayerVoronoiZoom(10L, genlayerrivermix);
         genlayerrivermix.initWorldGenSeed(par0);

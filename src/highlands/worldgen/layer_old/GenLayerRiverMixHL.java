@@ -1,6 +1,5 @@
-package highlands.worldgen.layer;
+package highlands.worldgen.layer_old;
 
-import fabricator77.multiworld.api.biomeregistry.AdvancedBiomeRegistry;
 import highlands.integration.BoPBiomeLayerHelper;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
@@ -11,6 +10,7 @@ public class GenLayerRiverMixHL extends GenLayer
 {
     private GenLayer biomePatternGeneratorChain;
     private GenLayer riverPatternGeneratorChain;
+    private static final String __OBFID = "CL_00000567";
 
     public GenLayerRiverMixHL(long par1, GenLayer par3GenLayer, GenLayer par4GenLayer)
     {
@@ -44,9 +44,23 @@ public class GenLayerRiverMixHL extends GenLayer
         {
             if (aint[i1] != BiomeGenBase.ocean.biomeID && aint[i1] != BiomeGenBase.deepOcean.biomeID)
             {
-                if (AdvancedBiomeRegistry.biomeEntries[aint[i1]].riverBiome >= 0)
+                if (aint1[i1] == BiomeGenBase.river.biomeID)
                 {
-                	aint2[i1] = AdvancedBiomeRegistry.biomeEntries[aint[i1]].riverBiome;
+                	
+                    if (aint[i1] == BiomeGenBase.icePlains.biomeID)
+                    {
+                        aint2[i1] = BiomeGenBase.frozenRiver.biomeID;
+                    }
+                    else if (aint[i1] != BiomeGenBase.mushroomIsland.biomeID && aint[i1] != BiomeGenBase.mushroomIslandShore.biomeID)
+                    {
+                        //aint2[i1] = aint1[i1] & 255;
+                    }
+                    else
+                    {
+                        aint2[i1] = BiomeGenBase.mushroomIslandShore.biomeID;
+                    }
+                    // BoP river biomes
+                	if (BoPBiomeLayerHelper.biomesOPlentyInstalled()) aint2[i1] = BoPBiomeLayerHelper.getRiverBiome(aint[i1]);
                 }
                 else
                 {

@@ -19,7 +19,7 @@ public class WorldGenMountain extends WorldGenerator
     private int snowrocksand;
     private boolean notifyFlag;
     
-    private World world;
+    private World worldObj;
     private Random random;
 
     /** Constructor
@@ -42,7 +42,7 @@ public class WorldGenMountain extends WorldGenerator
     //}
     public boolean generate(World world, Random random, int locX, int locY, int locZ)
     {
-    	this.world = world;
+    	this.worldObj = world;
     	this.random = random;
     	
     	int height = minHeight + random.nextInt(maxHeight);
@@ -76,18 +76,19 @@ public class WorldGenMountain extends WorldGenerator
 				}
 			}
 		}
-    	this.world = null;
+    	this.worldObj = null;
     	return true;
     }   
     
     private void setBlockInWorld(int x, int y, int z, Block sandstone, int meta){
     	try{
-			if(notifyFlag) world.setBlock(x, y, z, sandstone, meta, 3);
-		    else world.setBlock(x, y, z, sandstone, meta, 2);
+			if(notifyFlag) worldObj.setBlock(x, y, z, sandstone, meta, 3);
+		    else worldObj.setBlock(x, y, z, sandstone, meta, 2);
     	}
     	catch(RuntimeException e){
     		if(e.getMessage().equals("Already decorating!!")){
     			System.out.println("Error: Highlands Mountain block couldn't generate!");
+    			this.worldObj = null;
     		}
     		//e.printStackTrace();
     	}

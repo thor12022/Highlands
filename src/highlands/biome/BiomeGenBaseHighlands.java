@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import highlands.Highlands;
+import highlands.api.IHighlandsBiome;
 import highlands.worldgen.WorldGenSmallPlants;
-
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
-public abstract class BiomeGenBaseHighlands extends BiomeGenBase
+public abstract class BiomeGenBaseHighlands extends BiomeGenBase implements IHighlandsBiome
 {
 	
 	public ArrayList<BiomeGenBase> subBiomes;

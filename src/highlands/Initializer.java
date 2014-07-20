@@ -98,7 +98,7 @@ public class Initializer
 		Highlands.vanillaBlocksFlag = !Config.modWoodAndLeaves.getBoolean(true);
 		Highlands.plantsFlag = Config.smallPlants.getBoolean(true);
 		
-		Highlands.highlandsInDefaultFlag = Config.genDefault.getBoolean(false);
+		Highlands.addBoPbiomes = Config.addBoPbiomes.getBoolean(false);
 		
 		Highlands.useOreGens = Config.genOre.getBoolean(true);
 		Highlands.useGenLayers = !Config.safeMode.getBoolean(false);
@@ -248,7 +248,6 @@ public class Initializer
 		GameRegistry.registerBlock(HighlandsBlocks.hlplankhalfdouble, ItemSlabPlanks.class, "hl_woodDoubleSlab");
 		HighlandsBlocks.hlplankhalf = new BlockHLPlankSlab(false, HighlandsBlocks.hlplanks).setHardness(2.0F).setResistance(5.0F)
 				.setStepSound(Block.soundTypeWood).setBlockName("hl_woodSlab");
-		//GameRegistry.registerBlock(HighlandsBlocks.hlplankhalf, ItemBlockMetadata.class, "hl_woodSlab");
 		GameRegistry.registerBlock(HighlandsBlocks.hlplankhalf, ItemSlabPlanks.class, "hl_woodSlab");
 		
 		
@@ -427,6 +426,7 @@ public class Initializer
 			HighlandsBiomes.sahel = new BiomeGenSahel(Config.sahelID).setBiomeName(biomePrefix+"Sahel");
 			HighlandsBiomes.biomesForHighlands.add(HighlandsBiomes.sahel);
 		}
+		//TODO: replace savannah with new biome, cracked ground of some sort, dead trees
 		if(Config.savannahID > -1) {
 			HighlandsBiomes.savannah = new BiomeGenSavannah(Config.savannahID).setBiomeName(biomePrefix+"Savannah");
 			HighlandsBiomes.biomesForHighlands.add(HighlandsBiomes.savannah);
@@ -468,7 +468,7 @@ public class Initializer
 		}
 		//TODO: Oriental Forest Biome
 		/**
-		 * Can you PLZ add a Japanese Biome and Cherry Blosom Trees.
+		 * Add a Japanese Biome and Cherry Blosom Trees.
 		 * orientally themed biome
 		 * Perhaps combine that with lots of water pools and source blocks and high proportion of reeds/bamboo
 		 *  (could be used to produce sticks/planks/medicine).
@@ -477,6 +477,7 @@ public class Initializer
 		 *  For custom ore generation, Coal and iron are common to China/Japan, so these would be best.
 		*/
 		//TODO: Inland Volcano Biome
+		//TODO: replacement for 
 		
 		//improved ocean biome
 		if(Config.ocean2ID > -1) {

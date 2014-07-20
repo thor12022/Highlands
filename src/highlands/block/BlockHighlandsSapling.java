@@ -3,6 +3,11 @@ package highlands.block;
 import java.util.List;
 import java.util.Random;
 
+import powercrystals.minefactoryreloaded.api.FertilizerType;
+import powercrystals.minefactoryreloaded.api.IFactoryFertilizable;
+import powercrystals.minefactoryreloaded.api.IFactoryPlantable;
+import powercrystals.minefactoryreloaded.api.ReplacementBlock;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import highlands.Highlands;
@@ -36,7 +41,11 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
+@Optional.InterfaceList({
+		@Optional.Interface(iface = "IFactoryFertilizable", modid = "MineFactoryReloaded"),
+		@Optional.Interface(iface = "IFactoryPlantable", modid = "MineFactoryReloaded")
+})
+public class BlockHighlandsSapling extends BlockSapling implements IPlantable, IFactoryFertilizable, IFactoryPlantable{
 
 	private int treeType;
 	
@@ -58,8 +67,6 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
 			"Ash",
 			"AutumnOrange",
 			"AutumnYellow",
-			"Hedge",        // not used
-			"JapaneseMaple" // new
 		};
 	
 	private int[] growTimes = {
@@ -90,14 +97,6 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
     public void registerBlockIcons(IIconRegister par1IconRegister)
     {
     	this.blockIcon = par1IconRegister.registerIcon("Highlands:sapling" + treeNames[treeType]);
-    	
-    	/**
-    	textures = new IIcon[treeNames.length];
-
-		for (int i = 0; i < treeNames.length; ++i) {
-			textures[i] = par1IconRegister.registerIcon("Highlands:sapling" + treeNames[i]);
-		}
-		*/
     }
     
 	@Override
@@ -118,12 +117,12 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
 	public void getSubBlocks(Item block, CreativeTabs creativeTabs, List list) 
 	{
 		list.add(new ItemStack(block, 1, treeType));
-		/**
+
 		for (int i = 0; i < treeNames.length; ++i) 
 		{
 			list.add(new ItemStack(block, 1, i));
 		}
-		*/
+
 	}
     
     /**
@@ -147,11 +146,12 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
 	/**
      * Ticks the block if it's been scheduled
      */
+    @Override
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
         if (!par1World.isRemote)
         {
-            super.updateTick(par1World, par2, par3, par4, par5Random);
+            //super.updateTick(par1World, par2, par3, par4, par5Random);
 
             if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && par5Random.nextInt(7) == 0)
             {
@@ -161,6 +161,16 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
             		par1World.setBlock(par2, par3, par4, this, par1World.getBlockMetadata(par2, par3, par4)+1, 2);
             }
         }
+    }
+    
+    // IGrowable
+    @Override
+    public void func_149853_b(World world, Random random, int x, int y, int z)
+    {
+    	if(world.getBlockMetadata(x, y, z) > growTimes[treeType])
+    		growTree(world,x,y,z,random);
+    	else if(world.getBlockMetadata(x, y, z) < 15)
+    		world.setBlock(x, y, z, this, world.getBlockMetadata(x, y, z)+1, 2);
     }
     
     /*
@@ -333,38 +343,61 @@ public class BlockHighlandsSapling extends BlockSapling implements IPlantable{
         return metadata;
     }
 
-    //TODO- MFR is not 1.7.x yet
-//	//// MFR : IFactoryFertilizable
-//	@Override
-//	public int getFertilizableBlockId() {
-//		return blockID;
-//	}
-//
-//	@Override
-//	public boolean canFertilizeBlock(World world, int x, int y, int z, FertilizerType fertilizerType) {
-//		return world.getBlockId(x,y,z) == blockID;
-//	}
-//
-//	@Override
-//	public boolean fertilize(World world, Random rand, int x, int y, int z, FertilizerType fertilizerType) {
-//		return this.growTree(world, x,y,z, rand);
-//	}
-//
-//	//// MFR : IFactoryPlantable
-//	@Override
-//	public int getSeedId() {
-//		return blockID;
-//	}
-//
-//	@Override
-//	public int getPlantedBlockId(World world, int x, int y, int z, ItemStack stack) {
-//		return blockID;
-//	}
-//
-//	@Override
-//	public int getPlantedBlockMetadata(World world, int x, int y, int z, ItemStack stack) {
-//		return 0;
-//	}
+    // MFR : IFactoryFertilizable
+    @Optional.Method(modid = "MineFactoryReloaded")
+    @Override
+    public Block getPlant() {
+    	return this;
+    }
+    
+    @Optional.Method(modid = "MineFactoryReloaded")
+    @Override
+    public boolean canFertilize(World world, int x, int y, int z, FertilizerType fertilizerType) {
+    	return world.getBlock(x,y,z) == this;
+    }
+
+    @Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public boolean fertilize(World world, Random rand, int x, int y, int z, FertilizerType fertilizerType) {
+		return this.growTree(world, x,y,z, rand);
+	}
+
+	// MFR : IFactoryPlantable
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public Item getSeed() {
+		return Item.getItemFromBlock(this);
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public ReplacementBlock getPlantedBlock(World world, int x, int y, int z, ItemStack stack) {
+		return new ReplacementBlock(this);
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public boolean canBePlantedHere(World world, int x, int y, int z, ItemStack stack) {
+		return isValidPosition(world, x, y, z, stack.getItemDamage());
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public boolean canBePlanted(ItemStack stack, boolean forFermenting) {
+		return true;
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public void prePlant(World world, int x, int y, int z, ItemStack stack) {
+		// do nothing
+	}
+	
+	@Optional.Method(modid = "MineFactoryReloaded")
+	@Override
+	public void postPlant(World world, int x, int y, int z, ItemStack stack) {
+		// do nothing
+	}
 
 	public boolean isValidPosition(World world, int x, int y, int z, int meta) {
 		// this crashes MC:

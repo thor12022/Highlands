@@ -46,8 +46,14 @@ public class WorldGenTreeRedwood extends WorldGenHighlandsTreeBase
     	this.random = random;
     	
         
-        if(!isLegalTreePosition(world, locX, locY, locZ))return false;
-        if(!isCubeClear(locX, locY+3, locZ, 4, 20))return false;
+        if(!isLegalTreePosition(world, locX, locY, locZ)) {
+        	this.worldObj = null;
+        	return false;
+        }
+        if(!isCubeClear(locX, locY+3, locZ, 4, 20)) {
+        	this.worldObj = null;
+        	return false;
+        }
     	
         
         int treeHeight = minHeight + random.nextInt(maxHeight);
@@ -68,6 +74,7 @@ public class WorldGenTreeRedwood extends WorldGenHighlandsTreeBase
 			if(r < 6)r++;
 		}
 		
+		// very top of tree
 		h = locY + treeHeight - 2;
 		generateLeafLayerCircleNoise(world, random, 3.5, locX, locZ, h);
 		h++;
@@ -82,6 +89,7 @@ public class WorldGenTreeRedwood extends WorldGenHighlandsTreeBase
 		generateLeafLayerCircleNoise(world, random, 0, locX, locZ, h);
 		h++;
 		generateLeafLayerCircleNoise(world, random, 0, locX, locZ, h);
+		
 		this.worldObj = null;
 		return true;
     }

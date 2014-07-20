@@ -2,6 +2,9 @@ package highlands.overworld;
 
 import highlands.worldgen.layer.GenLayerHL;
 
+//import highlands.worldgen.testlayers.GenLayerTest;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,7 +40,8 @@ public class WorldChunkManagerHL extends WorldChunkManager
     {
         this();
         GenLayer[] agenlayer = GenLayerHL.initializeAllBiomeGenerators(seed, worldType);
-        // agenlayer = getModdedBiomeGenerators(worldType, seed, agenlayer);
+        //GenLayer[] agenlayer = GenLayerTest.initializeAllBiomeGenerators(seed, worldType);
+        agenlayer = getModdedBiomeGenerators(worldType, seed, agenlayer);
         this.mbGenBiomes = agenlayer[0];
         this.mbBiomeIndexLayer = agenlayer[1];
     }

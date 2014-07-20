@@ -51,7 +51,7 @@ public class BiomeGenWoodsMountains extends BiomeGenBaseHighlands
     	case 2: return (WorldGenAbstractTree)this.worldGeneratorTrees;
     	case 3: return (WorldGenAbstractTree)this.worldGeneratorBigTree;
     	case 4: return (WorldGenAbstractTree)new WorldGenHighlandsBigTree(false, true, 2, 2, 1, 0);
-    	case 5: return (WorldGenAbstractTree)new WorldGenHighlandsBigTree(false, true, 0, 0, 2, 20);
+    	case 5: return (WorldGenAbstractTree)new WorldGenHighlandsBigTree(false, true, 0, 0, 2, 16); // bad ??? 20 height
     	default: return (WorldGenAbstractTree)this.worldGeneratorTrees;
     	}
         //return (WorldGenerator)(par1Random.nextInt(5) == 0 ? this.worldGeneratorForest : (par1Random.nextInt(10) == 0 ? this.worldGeneratorBigTree : this.worldGeneratorTrees));

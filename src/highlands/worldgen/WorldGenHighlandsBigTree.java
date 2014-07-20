@@ -20,7 +20,7 @@ public class WorldGenHighlandsBigTree extends WorldGenHighlandsTreeBase
     Random rand = new Random();
 
     /** Reference to the World object. */
-    //World worldObj;
+    World worldObj;
     int[] basePos = new int[] {0, 0, 0};
     int heightLimit = 0;
     int height;
@@ -48,18 +48,27 @@ public class WorldGenHighlandsBigTree extends WorldGenHighlandsTreeBase
     /** Contains a list of a points at which to generate groups of leaves. */
     int[][] leafNodes;
     
-    int leafMeta;
+    int leafMeta = 0;
     int woodMeta;
     boolean hasLeaves;
 
-    public WorldGenHighlandsBigTree(boolean par1, boolean placeLeaves, int wmd, int lmd, int trunkDiameter, int treeHeightLim)
+    /**
+     * 
+     * @param par1
+     * @param placeLeaves
+     * @param wmd wood metadata
+     * @param lmd leaf metadata
+     * @param trunkDiameter
+     * @param treeHeightLimit
+     */
+    public WorldGenHighlandsBigTree(boolean par1, boolean placeLeaves, int wmd, int lmd, int trunkDiameter, int treeHeightLimit)
     {
     	super(lmd, wmd, Blocks.log, Blocks.leaves, false); // last 3 are dummy data for now
         hasLeaves = placeLeaves;
         leafMeta = lmd;
         woodMeta = wmd;
         trunkSize = trunkDiameter;
-        heightLimit = treeHeightLim;
+        heightLimit = treeHeightLimit;
     }
     
     public boolean generateReplaceSapling(World world, Random random, int locX, int locY, int locZ){
@@ -156,7 +165,7 @@ public class WorldGenHighlandsBigTree extends WorldGenHighlandsTreeBase
         System.arraycopy(var2, 0, this.leafNodes, 0, var4);
     }
 
-    void genTreeLayer(int par1, int par2, int par3, float par4, byte par5, Block par6)
+    void genTreeLayer(int par1, int par2, int par3, float par4, byte par5, Block leafBlock)
     {
         int var7 = (int)((double)par4 + 0.618D);
         byte var8 = otherCoordPairs[par5];
@@ -191,7 +200,9 @@ public class WorldGenHighlandsBigTree extends WorldGenHighlandsTreeBase
                     }
                     else
                     {
-                        if(hasLeaves)this.setBlockAndNotifyAdequately(this.worldObj, var11[0], var11[1], var11[2], par6, leafMeta);
+                        if(hasLeaves) {
+                        	this.setBlockAndNotifyAdequately(this.worldObj, var11[0], var11[1], var11[2], leafBlock, leafMeta);
+                        }
                         ++var13;
                     }
                 }

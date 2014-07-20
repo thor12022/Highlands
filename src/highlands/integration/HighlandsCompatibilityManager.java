@@ -1,4 +1,5 @@
 package highlands.integration;
+import powercrystals.minefactoryreloaded.api.FactoryRegistry;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import forestry.api.apiculture.FlowerManager;
 import forestry.api.recipes.RecipeManagers;
@@ -312,26 +313,26 @@ RecipeManagers.fermenterManager.addRecipe(sapling, 250 * scalar, 1.5F, biomass, 
 }
 }
 
-/**
+
 public static void registerBlocksMFR(){
-for (Block b : HighlandsBlocks.saplings){
-if (!(b instanceof BlockHighlandsSapling))
-continue;
-FactoryRegistry.registerPlantable((BlockHighlandsSapling)b );
-FactoryRegistry.registerFertilizable((BlockHighlandsSapling)b );
+	for (Block b : HighlandsBlocks.saplings){
+		if (!(b instanceof BlockHighlandsSapling))
+			continue;
+		FactoryRegistry.sendMessage("registerPlantable", (BlockHighlandsSapling)b); // instanceof IFactoryPlantable
+		FactoryRegistry.sendMessage("registerFertilizable", (BlockHighlandsSapling)b); // instanceof IFactoryFertilizable
+	}
+	for (Block b : HighlandsBlocks.logs){
+		if (!(b instanceof BlockHighlandsLog))
+			continue;
+		FactoryRegistry.sendMessage("registerHarvestable", (BlockHighlandsLog)b); // instanceof IFactoryHarvestable
+	}
+	for (Block b : HighlandsBlocks.leaves){
+		if (!(b instanceof BlockHighlandsLeaves))
+			continue;
+		FactoryRegistry.sendMessage("registerHarvestable", (BlockHighlandsLeaves)b); // instanceof IFactoryHarvestable
+	}
 }
-for (Block b : HighlandsBlocks.logs){
-if (!(b instanceof BlockHighlandsLog))
-continue;
-FactoryRegistry.registerHarvestable((BlockHighlandsLog)b);
-}
-for (Block b : HighlandsBlocks.leaves){
-if (!(b instanceof BlockHighlandsLeaves))
-continue;
-FactoryRegistry.registerHarvestable((BlockHighlandsLeaves)b);
-}
-}
-*/
+
 
 /** start current code
 public static void registerBiomesATG(){
